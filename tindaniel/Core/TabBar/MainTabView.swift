@@ -33,8 +33,8 @@ struct MainTabView: View {
                     Image(systemName: "person")
                 }
                 .tag(3)
-
         }
+        .tint(.primary)
     }
 }
 
