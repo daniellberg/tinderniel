@@ -8,11 +8,21 @@
 import SwiftUI
 
 struct CardStackView: View {
+    
+    @StateObject var viewModel = CardsViewModel(service: CardService())
+
+    
     var body: some View {
         ZStack{
-            ForEach(0 ..< 10){ card in
-                CardView()
+            ForEach(Array(viewModel.cardModels.enumerated()), id: \.element.id){ index, card in
+                CardView(user: card.user){
+                    viewModel.cardModels.remove(at: index)
+                }
+                
             }
+        }
+        .task {
+            await viewModel.fetchCardModel()
         }
     }
 }

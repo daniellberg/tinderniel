@@ -1,39 +1,35 @@
-//
-//  CardView.swift
-//  tindaniel
-//
-//  Created by Daniel Berg on 03/03/26.
-//
-
 import SwiftUI
+
 struct CardView: View {
+    
+    let user: User
+    var onRemove: (() -> Void)? = nil
     
     @State private var xOffset: CGFloat = 0
     @State private var degrees: Double = 0
     @State private var currentImageIndex = 0
     
-    @State private var mockImages = [
-        "avatar",
-        "cartman"
-    ]
-    
     var body: some View {
         ZStack(alignment: .bottom){
-            ZStack (alignment: .top){
-                Image(mockImages[currentImageIndex])
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: SizeConstants.cardWidth, height: SizeConstants.cardHeight)
-                    .overlay {
-                        ImageScrollingOverlay(currentImageIndex: $currentImageIndex, imageCount: mockImages.count)
-                    }
-                CardImageIndicatorView(currentImageIndex: currentImageIndex, imageCount: mockImages.count)
+            ZStack(alignment: .top){
+                AsyncImage(url: URL(string: user.profileImageURLs[currentImageIndex])) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: SizeConstants.cardWidth, height: SizeConstants.cardHeight)
+                        .overlay {
+                            ImageScrollingOverlay(currentImageIndex: $currentImageIndex, imageCount: user.profileImageURLs.count)
+                        }
+                } placeholder: {
+                    ProgressView()
+                        .frame(width: SizeConstants.cardWidth, height: SizeConstants.cardHeight)
+                }
                 
+                CardImageIndicatorView(currentImageIndex: currentImageIndex, imageCount: user.profileImageURLs.count)
                 SwipeActionIndicatorView(xOffset: $xOffset)
-                
             }
             
-            UserInfoView()
+            UserInfoView(user: user)
         }
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .padding()
@@ -57,41 +53,40 @@ private extension CardView {
     func swipeRight(){
         xOffset = 500
         degrees = 12
+        onRemove?()
     }
     
     func swipeLeft(){
         xOffset = -500
         degrees = -12
+        onRemove?()
     }
 }
 
 private extension CardView {
     func onDragChanged(_ value: _ChangedGesture<DragGesture>.Value){
         xOffset = value.translation.width
-        degrees =  Double(value.translation.width/25)
+        degrees = Double(value.translation.width / 25)
     }
     
     func onDragEnded(_ value: _ChangedGesture<DragGesture>.Value) {
         let width = value.translation.width
-        
         if abs(width) <= abs(SizeConstants.screenCutOff) {
             returnCenter()
             return
         }
-        
         if width >= SizeConstants.screenCutOff {
             swipeRight()
-        } else{
+        } else {
             swipeLeft()
         }
     }
 }
 
-private extension CardView {
-    
-    
-}
-
 #Preview {
-    CardView()
+    ZStack {
+        ForEach(MockData.users) { user in
+            CardView(user: user)
+        }
+    }
 }

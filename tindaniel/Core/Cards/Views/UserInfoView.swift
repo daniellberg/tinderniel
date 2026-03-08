@@ -42,24 +42,27 @@
 //    UserInfoView()
 //}
 
-//
-//  UserInfoView.swift
-//  tindaniel
-//
-//  Created by Daniel Berg on 03/03/26.
+
+  //UserInfoView.swift
+  //tindaniel
+
+//Created by Daniel Berg on 03/03/26.
 //
 
 import SwiftUI
 
 struct UserInfoView: View {
+    
+    let user: User
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack{
-                Text("Avatar")
+                Text(user.fullName)
                     .font(.title)
                     .fontWeight(.heavy)
                 
-                Text("190")
+                Text("\(user.age)")
                     .font(.title)
                     .fontWeight(.semibold)
                 
@@ -86,5 +89,24 @@ struct UserInfoView: View {
 }
 
 #Preview {
-    UserInfoView()
+    UserInfoView(user: MockData.users.first!)
 }
+//
+//import SwiftUI
+//
+//struct UserInfoView: View {
+//    let user: User
+//    
+//    var body: some View {
+//        VStack(alignment: .leading) {
+//            Text(user.fullName)
+//                .font(.title)
+//                .bold()
+//            Text("\(user.age) anos")
+//                .font(.subheadline)
+//        }
+//        .padding()
+//        .background(.ultraThinMaterial)
+//        .frame(maxWidth: .infinity, alignment: .leading)
+//    }
+//}
